@@ -1,6 +1,7 @@
 // import request from '@/utils/request'
 
-export function login(data) {
+export function loginAPI(data) {
+
 }
 
 export function getInfo(token) {
