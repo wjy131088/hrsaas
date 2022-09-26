@@ -22,7 +22,11 @@ const store = new Vuex.Store({
     reducer(state) {
       // console.log(state)
       const { token } = state.user
-      return { token }
+      return {
+        user: {
+          token: token
+        }
+      }
     }
   })]
 })
