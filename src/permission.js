@@ -7,8 +7,11 @@ import store from '@/store'
 // 2.2 token 不存在 说明 不处于登录状态
 // 2.2.1 判断一下 是否处于白名单 是的话 直接留在 当前页 否则 跳转到登录页
 const whiteList = ['/login', '/404'] // 定义白名单  所有不受权限控制的页面
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   if (store.getters.token) { //  处于登录状态
+    if (!store.getters.userId) {
+      await store.dispatch('user/getUserInfo')
+    }
     //   如果有token 继续判断是不是去登录页
     if (to.path === '/login') {
       //  表示去的是登录页
