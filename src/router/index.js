@@ -65,6 +65,16 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Dashboard11', icon: 'dashboard' }
     }]
+  },
+  {
+    path: '/dashboard22',
+    component: Layout,
+    children: [{
+      path: '',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: 'Dashboard22', icon: 'dashboard' }
+    }]
   }
 ]
 

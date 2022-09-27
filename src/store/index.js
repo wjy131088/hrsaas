@@ -16,15 +16,16 @@ const store = new Vuex.Store({
   },
   getters,
   plugins: [createPersistedState({
-    // paths: ['user.token']
+    // paths: ['user.token','user.hrsaasTime']
     // 用于存储持久状态的密钥。默认为vuex。
     key: 'HRSAAS',
     reducer(state) {
       // console.log(state)
-      const { token } = state.user
+      const { token, hrsaasTime } = state.user
       return {
         user: {
-          token: token
+          token: token,
+          hrsaasTime: hrsaasTime
         }
       }
     }
