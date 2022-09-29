@@ -9,6 +9,7 @@ export default {
   },
   mutations: {
     SET_TOKEN(state, token) {
+      console.log(token)
       state.token = token
     },
     SET_USER_INFO(state, userInfo) {

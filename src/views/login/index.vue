@@ -34,8 +34,8 @@ import { validPhone } from '@/utils/validate'
 export default {
   data() {
     const phoneValid = (rule, value, callback) => {
-      // console.log(value)
-      // console.log(rule, value, callback)
+      console.log(value)
+      console.log(rule, value, callback)
       if (!validPhone(value)) {
         callback(new Error('格式错误'))
       } else {
