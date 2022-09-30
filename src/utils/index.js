@@ -115,3 +115,17 @@ export function param2Obj(url) {
   })
   return obj
 }
+export const tranListToTreeData = (list, rootVale) => {
+  const arr = []
+  list.forEach(item => {
+    if (item.pid === rootVale) {
+      const children = tranListToTreeData(list, item.id)
+      if (children.length) {
+        // 如果children的长度大于0 说明找到了子节点
+        item.children = children
+      }
+      arr.push(item)
+    }
+  })
+  return arr
+}
