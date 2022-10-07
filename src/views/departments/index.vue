@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="departments-container">
+    <div v-loading="loading" class="departments-container">
       <el-card class="tree-card">
         <!-- 用了一个行列布局 -->
         <!-- 缺少treeNode -->
@@ -11,9 +11,9 @@
         <!-- 说明el-tree里面的这个内容 就是插槽内容 => 填坑内容  => 有多少个节点循环多少次 -->
         <!-- scope-scope 是 tree组件传给每个节点的插槽的内容的数据 -->
         <!-- 顺序一定是 执行slot-scope的赋值 才去执行 props的传值 -->
-        <tree-tools slot-scope="{ data }" :tree-node="data" @addDept="handleAddDepts" />
+        <tree-tools slot-scope="{ data }" :tree-node="data" @refreshList="getDepartments" @editDept="editDept" @addDept="handleAddDepts" />
       </el-tree>
-      <add-dept :dialog-visible.sync="dialogVisible" :tree-node="currentNode" />
+      <add-dept ref="addDept" :dialog-visible.sync="dialogVisible" :tree-node="currentNode" />
     </div>
   </div>
 </template>
@@ -42,7 +42,8 @@ export default {
         label: 'name' // 表示 从这个属性显示内容
       },
       dialogVisible: false,
-      currentNode: {}
+      currentNode: {},
+      losding: false
     }
   },
 
@@ -54,13 +55,23 @@ export default {
   },
   methods: {
     async getDepartments() {
-      const { companyName, depts, companyMange } = await getDepartments()
-      this.company = { name: companyName, manager: companyMange, id: '' }
-      this.departs = tranListToTreeData(depts, '')
+      try {
+        this.loading = true
+        const { companyName, depts, companyMange } = await getDepartments()
+        this.company = { name: companyName, manager: companyMange, id: '' }
+        this.departs = tranListToTreeData(depts, '')
+      } finally {
+        this.loading = false
+      }
     },
     handleAddDepts(node) {
       this.dialogVisible = true // 显示弹层
       this.currentNode = node
+    },
+    editDept(node) {
+      this.dialogVisible = true // 显示弹层
+      this.currentNode = { ...node }
+      this.$refs.addDept.formData = { ...node }
     }
   }
 }

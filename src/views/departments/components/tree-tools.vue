@@ -18,7 +18,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="add">添加子部门</el-dropdown-item>
               <el-dropdown-item v-if="isRoot" command="edit">编辑部门</el-dropdown-item>
-              <el-dropdown-item v-if="isRoot" command="edit">删除部门</el-dropdown-item>
+              <el-dropdown-item v-if="isRoot" command="handleCommand">删除部门</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { delDepartments } from '@/api/departments'
 // 该组件需要对外开放属性 外部需要提供一个对象 对象里需要有name  manager
 export default {
   // props可以用数组来接收数据 也可以用对象来接收
@@ -53,8 +54,18 @@ export default {
         this.$emit('addDept', this.treeNode)
       } else if (type === 'edit') {
         // 编辑
+        this.$emit('editDept', this.treeNode)
       } else {
         // 删除
+        this.$confirm('是否确认删除该部门', '提示', {
+          type: 'warning'
+        }).then(async res => {
+          return delDepartments(this.treeNode.id)
+          // 调用删除接口
+        }).then(res => {
+          this.$message.success('删除成功')
+          this.$emit('refreshList')
+        })
       }
     }
   }
