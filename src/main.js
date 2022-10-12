@@ -15,6 +15,8 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import * as directives from '@/directives'
+import components from '@/components'
+Vue.use(components)
 // console.log(directives)
 // console.log(Object.keys(directives))
 Object.keys(directives).forEach(key => {
