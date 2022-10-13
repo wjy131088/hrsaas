@@ -82,7 +82,7 @@ export default {
       total: 0,
       roleList: [],
       dialogVisible: false,
-      companyInfo: null
+      companyInfo: {}
     }
   },
   computed: {
@@ -130,6 +130,7 @@ export default {
     // 获取的公司的信息
     async getCompanyInfo() {
       this.companyInfo = await getCompanyInfo(this.companyId)
+      // console.log(this.companyInfo)
     }
   }
 }

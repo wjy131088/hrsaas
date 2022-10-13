@@ -10,5 +10,11 @@ export default {
       title: '员工',
       icon: 'people'
     }
-  }]
+  },
+  {
+    path: '/employees/detial/:id',
+    component: () => import('@/views/employees/detail.vue'),
+    hidden: true
+  }
+  ]
 }
