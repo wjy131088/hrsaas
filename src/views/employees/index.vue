@@ -17,6 +17,19 @@
           label="姓名"
           prop="username"
         />
+        <el-table-column label="头像" sortable="">
+          <template slot-scope="{ row }">
+            <img
+              style="
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            padding: 10px;"
+              :src="row.staffPhoto"
+              @click="genQrCode(row.staffPhoto)"
+            >
+          </template>
+        </el-table-column>
         <el-table-column prop="workNumber" label="工号" />
         <el-table-column :formatter="formatterFn" prop="formOfEmployment" label="聘用形式">
           <!-- <template slot-scope="{row}"> -->
@@ -64,6 +77,9 @@
       </el-row>
     </el-card>
     <AddEmployee :dialog-visible.sync="dialogVisible" />
+    <el-dialog title="预览头像" :visible.sync="dialogVisibleQrCode" width="50%">
+      <canvas ref="canvas" />
+    </el-dialog>
   </div>
 </template>
 
@@ -72,6 +88,7 @@ import PageTools from '@/components/PageTools/index.vue'
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EnumHireType from '@/api/constant/employees'
 import AddEmployee from './components/add-employees.vue'
+import QrCode from 'qrcode'
 export default {
   name: 'HrsaasIndex',
   components: {
@@ -88,7 +105,8 @@ export default {
       total: 0, // 总数
       loading: false,
       hireType: EnumHireType.hireType,
-      dialogVisible: false
+      dialogVisible: false,
+      dialogVisibleQrCode: false
     }
   },
 
@@ -157,13 +175,24 @@ export default {
       export_json_to_excel({
         header, // 表头 必填
         data, // 具体数据 必填
-        filename: '员工列表', // 非必填
+        filename: '员工列像表', // 非必填
         autoWidth: true, // 非必填
         bookType: 'xlsx' // 非必填
       })
     },
     goBetial(row) {
       this.$router.push('/employees/detial/' + row.id)
+    },
+    genQrCode(staffPhoto) {
+      console.log(staffPhoto)
+      if (!staffPhoto) return this.$message.error('暂无头像')
+      this.dialogVisibleQrCode = true
+      this.$nextTick(() => {
+        QrCode.toCanvas(this.$refs.canvas, staffPhoto, function(error) {
+          if (error) console.log(error)
+          console.log('success')
+        })
+      })
     }
   }
 }

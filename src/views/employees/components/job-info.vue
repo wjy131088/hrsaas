@@ -1,5 +1,8 @@
 <template>
   <div class="job-info">
+    <router-link :to="'/employees/print/' + userId">
+      <i class="el-icon-printer" />
+    </router-link>
     <!-- 基础信息 -->
     <el-form label-width="220px">
       <div class="block">

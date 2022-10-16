@@ -1,5 +1,8 @@
 <template>
   <div class="user-info">
+    <router-link :to="'/employees/print/' + userId">
+      <i class="el-icon-printer" />
+    </router-link>
     <!-- 个人信息 -->
     <el-form label-width="220px" :model="userInfo">
       <!-- 工号 入职时间 -->
@@ -58,6 +61,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
+            <upload-img ref="uploadAvatar" :default-url="employeesAvatar" @on-success="uploadAvatarSuccess" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -91,6 +95,7 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <upload-img ref="employeesPic" :default-url="employeesPic" @on-success="uploadPicSuccess" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -387,9 +392,13 @@
 
 <script>
 import EmployeeEnum from '@/api/constant/employees'
+import UploadImg from '@/components/UploadImg'
 import { getUserDetailById, saveUserDetailById } from '@/api/user.js'
 import { getEmployeesInfo, saveEmployeesInfo } from '@/api/employees.js'
 export default {
+  components: {
+    UploadImg
+  },
   data() {
     return {
       userId: this.$route.params.id,
@@ -457,7 +466,9 @@ export default {
         isThereAnyCompetitionRestriction: '', // 有无竞业限制
         proofOfDepartureOfFormerCompany: '', // 前公司离职证明
         remarks: '' // 备注
-      }
+      },
+      employeesAvatar: '',
+      employeesPic: ''
     }
   },
   created() {
@@ -468,14 +479,22 @@ export default {
     async loadUserInfo() {
       const res = await getUserDetailById(this.userId)
       this.userInfo = res
+      if (res.staffPhoto) {
+        this.employeesAvatar = res.staffPhoto
+      }
     },
     async loadEmployees() {
       const res = await getEmployeesInfo(this.userId)
-      // console.log(res)
+      if (res.staffPhoto) {
+        this.employeesPic = res.staffPhoto
+      }
       this.formData = res
     },
     async saveEmployeesInfo() {
       try {
+        if (this.$refs.employeesPic.loading) {
+          return this.$message.error('头像还在上传')
+        }
         await saveEmployeesInfo(this.formData)
         this.$message.success('更新成功')
       } catch (e) {
@@ -484,11 +503,26 @@ export default {
     },
     async saveUserInfo() {
       try {
+        if (this.$refs.uploadAvatar.loading) {
+          return this.$message.error('头像还在上传')
+        }
         await saveUserDetailById(this.userInfo)
         this.$message.success('保存用户信息成功')
       } catch (e) {
         this.$message.error('保存用户信息失败')
       }
+    },
+    // 监听头像上传成功
+    uploadAvatarSuccess(data) {
+      console.log(data)
+      this.userInfo.staffPhoto = data.imgurl
+    },
+    uploadPicSuccess(data) {
+      console.log(data)
+      this.formData.staffPhoto = data.imgurl
+    },
+    toPrint() {
+      this.$router.push({ path: `/employees/print/${this.formData.userId}?type=personal` })
     }
   }
 }
